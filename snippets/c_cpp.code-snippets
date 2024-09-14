@@ -1,0 +1,139 @@
+/**
+ * @file c_cpp.code-snippets
+ * @brief Contains custom code snippets for C and C++
+ *
+ * This file provides a collection of code snippets designed to facilitate rapid
+ * development by offering quick access to commonly used patterns and boilerplate
+ * code. The snippets include function templates, common data structures, and
+ * useful macros.
+ *
+ * To utilize these snippets, integrate this file into your IDE's snippet manager
+ * or configuration. Feel free to modify and expand the snippets to meet your
+ * specific coding requirements.
+ */
+
+{
+  /***************************************************************************************
+   * Header File Template
+   **************************************************************************************/
+  "C/C++ Header File Template": {
+    "scope": "c, cpp",
+    "prefix": "htemplate",
+    "body": [
+      "/***************************************************************************************",
+      " * File: ${TM_FILENAME}",
+      " * Author: ${USER} ${LINE_COMMENT} TODO",
+      " * Date: ${CURRENT_DATE}-${CURRENT_MONTH_NAME_SHORT}-${CURRENT_YEAR}",
+      " * Description: Brief description of the file's purpose.",
+      " **************************************************************************************/",
+      "",
+      "/***************************************************************************************",
+      " * License",
+      " **************************************************************************************/",
+      "/*",
+      " * This file is licensed under the MIT License. ${LINE_COMMENT} TODO",
+      " * License information should be updated as necessary.",
+      " */",
+      "",
+      "/***************************************************************************************",
+      " * Includes",
+      " **************************************************************************************/",
+      "#ifndef _${TM_FILENAME_BASE/(.*)/${1:/upcase}/}_H_",
+      "#define _${TM_FILENAME_BASE/(.*)/${1:/upcase}/}_H_",
+      "",
+      "#include <> ${LINE_COMMENT} TODO",
+      "",
+      "/***************************************************************************************",
+      " * Constants",
+      " **************************************************************************************/",
+      "",
+      "/***************************************************************************************",
+      " * Structure Declarations",
+      " **************************************************************************************/",
+      "",
+      "/***************************************************************************************",
+      " * Class Declarations",
+      " **************************************************************************************/",
+      "",
+      "",
+      "#endif"
+    ],
+    "description": "C/C++ header file template",
+    "isFileTemplate": true
+  },
+  /***************************************************************************************
+   * Source File Template
+   **************************************************************************************/
+  "C/C++ Source File Template": {
+    "scope": "c, cpp",
+    "prefix": "stemplate",
+    "body": [
+      "/***************************************************************************************",
+      " * File: ${TM_FILENAME}",
+      " * Author: ${USER} ${LINE_COMMENT} TODO",
+      " * Date: ${CURRENT_DATE}-${CURRENT_MONTH_NAME_SHORT}-${CURRENT_YEAR}",
+      " * Description: Brief description of the file's purpose.",
+      " **************************************************************************************/",
+      "",
+      "/***************************************************************************************",
+      " * Includes",
+      " **************************************************************************************/",
+      "",
+      "#include \"${TM_FILENAME_BASE}\"",
+      "",
+      "/***************************************************************************************",
+      " * Global Functions Definitions",
+      " **************************************************************************************/",
+      "",
+      "/***************************************************************************************",
+      " * Class Methods Definitions",
+      " **************************************************************************************/",
+      ""
+    ],
+    "description": "C/C++ source file template",
+    "isFileTemplate": true
+  },
+  /***************************************************************************************
+   * Debugging
+   **************************************************************************************/
+  "Print Pointer Address": {
+    "scope": "c, cpp",
+    "prefix": "plog",
+    "body": [
+      "printf(\"%s:%d $1: %p\\n\", \"${TM_FILENAME}\", __LINE__, $1); ${LINE_COMMENT} REMOVE"
+    ],
+    "description": "Prints pointer address to console"
+  },
+  "Print Hex Value": {
+    "scope": "c, cpp",
+    "prefix": "hlog",
+    "body": [
+      "printf(\"%s:%d $1: 0x%02x\\n\", \"${TM_FILENAME}\", __LINE__, $1); ${LINE_COMMENT} REMOVE"
+    ],
+    "description": "Print hex value to console"
+  },
+  "Print String Value": {
+    "scope": "c, cpp",
+    "prefix": "slog",
+    "body": [
+      "printf(\"%s:%d $1: %s\\n\", \"${TM_FILENAME}\", __LINE__, $1); ${LINE_COMMENT} REMOVE"
+    ],
+    "description": "Print string value to console"
+  },
+  "Print Function Name": {
+    "scope": "c, cpp",
+    "prefix": "log0",
+    "body": [
+      "printf(\"%s:%d %s $1\\n\", \"${TM_FILENAME}\", __LINE__, __FUNCTION__); ${LINE_COMMENT} REMOVE"
+    ],
+    "description": "Print filename with linenumber to console"
+  },
+  "Print Integer Values": {
+    "scope": "c, cpp",
+    "prefix": "log1",
+    "body": [
+      "printf(\"%s:%d $1: %d\\n\", \"${TM_FILENAME}\", __LINE__, $1); ${LINE_COMMENT} REMOVE"
+    ],
+    "description": "Print values to console"
+  }
+}

@@ -1,0 +1,115 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.out
+*.exe
+*.o
+*.so
+
+# Packages #
+############
+# It's better to unpack these files and commit the raw source
+# git has its own built in compression methods for making the transfer
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor-specific files #
+########################
+*~
+*.swp
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Language specific #
+#####################
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Java
+*.class
+
+# Ruby
+.bundle
+config/
+Gemfile.lock
+vendor/bundle/
+
+# PHP
+*.php.bak
+
+# Swift
+build/
+Packages/
+
+# Compiled TypeScript
+*.js.map
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+logs/
+
+# Dependency directories
+.bundler/
+.bundle/
+
+# Environment variables
+.env
+
+# Yarn
+.yarn/
+
+# Jest testing framework
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+
+# Puppeteer
+.puppeteer/
+
+# Helm
+*.tpl
+
+# Next.js
+.next/
+
+# Binaries, node_modules, and other folders #
+############################################
+bin/
+lib/
+dist/
+bower_components/
+*.min.js

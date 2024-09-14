@@ -1,0 +1,67 @@
+/**
+ * @file sh.code-snippets
+ * @brief Contains custom code snippets for Shellscript
+ *
+ * This file provides a collection of code snippets designed to facilitate rapid
+ * development by offering quick access to commonly used patterns and boilerplate
+ * code. The snippets include function templates, common data structures, and
+ * useful macros.
+ *
+ * To utilize these snippets, integrate this file into your IDE's snippet manager
+ * or configuration. Feel free to modify and expand the snippets to meet your
+ * specific coding requirements.
+ */
+
+{
+  /***************************************************************************************
+   * File Template
+   **************************************************************************************/
+  "Shell Script Template": {
+    "scope": "shellscript",
+    "prefix": "template",
+    "body": [
+      "#!/bin/sh",
+      "",
+      "##########################################################################################",
+      "# File: ${TM_FILENAME}",
+      "# Author: ${USER} # FIXME",
+      "# Date: ${CURRENT_DATE}-${CURRENT_MONTH_NAME_SHORT}-${CURRENT_YEAR}",
+      "# Description: Brief description of the script purpose.",
+      "##########################################################################################",
+      "",
+      "##########################################################################################",
+      "# License",
+      "##########################################################################################",
+      "# This script is licensed under the MIT License.",
+      "# License information should be updated as necessary.",
+      "",
+      "##########################################################################################",
+      "# Constants",
+      "##########################################################################################",
+      "",
+      "##########################################################################################",
+      "# Functions",
+      "##########################################################################################",
+      "",
+      "##########################################################################################",
+      "# Main Script",
+      "##########################################################################################",
+      "",
+      "# Main script logic goes here",
+      ""
+    ],
+    "description": "Shell script file template",
+    "isFileTemplate": true
+  },
+  /***************************************************************************************
+   * Debugging
+   **************************************************************************************/
+  "Print Hex Value": {
+    "scope": "shellscript",
+    "prefix": "hlog",
+    "body": [
+      "printf \"%s: '$1': 0x%X\\n\" \"${TM_FILENAME}\" \"$$1\" ${LINE_COMMENT} REMOVE"
+    ],
+    "description": "Print hex value to console"
+  }
+}

@@ -1,0 +1,94 @@
+/**
+ * @file js.code-snippets
+ * @brief Contains custom code snippets for Javascript
+ *
+ * This file provides a collection of code snippets designed to facilitate rapid
+ * development by offering quick access to commonly used patterns and boilerplate
+ * code. The snippets include function templates, common data structures, and
+ * useful macros.
+ *
+ * To utilize these snippets, integrate this file into your IDE's snippet manager
+ * or configuration. Feel free to modify and expand the snippets to meet your
+ * specific coding requirements.
+ */
+
+{
+  /***************************************************************************************
+   * File Template
+   **************************************************************************************/
+  "JavaScript File Template": {
+    "scope": "javascript",
+    "prefix": "template",
+    "body": [
+      "/***************************************************************************************",
+      " * File: ${TM_FILENAME}",
+      " * Author: ${USER} ${LINE_COMMENT} TODO",
+      " * Date: ${CURRENT_DATE}-${CURRENT_MONTH_NAME_SHORT}-${CURRENT_YEAR}",
+      " * Description: Brief description of the file's purpose.",
+      " **************************************************************************************/",
+      "",
+      "/***************************************************************************************",
+      " * License",
+      " **************************************************************************************/",
+      "/*",
+      " * This file is licensed under the MIT License. ${LINE_COMMENT} TODO",
+      " * License information should be updated as necessary.",
+      " */",
+      "",
+      "/***************************************************************************************",
+      " * Imports",
+      " **************************************************************************************/",
+      "",
+      "/***************************************************************************************",
+      " * Constants",
+      " **************************************************************************************/",
+      "",
+      "/***************************************************************************************",
+      " * Function Declarations",
+      " **************************************************************************************/",
+      "",
+      "/***************************************************************************************",
+      " * Main Code",
+      " **************************************************************************************/",
+      ""
+    ],
+    "description": "JavaScript file template",
+    "isFileTemplate": true
+  },
+
+  /***************************************************************************************
+   * Debugging
+   **************************************************************************************/
+  "Log Hex Value": {
+    "scope": "javascript",
+    "prefix": "hlog",
+    "body": [
+      "console.log('${TM_FILENAME}:%d $1: 0x%02x', 0 ${BLOCK_COMMENT_START} lineNumber ${BLOCK_COMMENT_END}, $1); ${LINE_COMMENT} REMOVE"
+    ],
+    "description": "Log hex value to console"
+  },
+  "Log String Value": {
+    "scope": "javascript",
+    "prefix": "slog",
+    "body": [
+      "console.log('${TM_FILENAME}:%d $1: %s', 0 ${BLOCK_COMMENT_START} lineNumber ${BLOCK_COMMENT_END}, $1); ${LINE_COMMENT} REMOVE"
+    ],
+    "description": "Log string value to console"
+  },
+  "Log Function Name": {
+    "scope": "javascript",
+    "prefix": "log0",
+    "body": [
+      "console.log('${TM_FILENAME}:%d %s', 0 ${BLOCK_COMMENT_START} lineNumber ${BLOCK_COMMENT_END}, arguments.callee.name); ${LINE_COMMENT} REMOVE"
+    ],
+    "description": "Log function name with line number to console"
+  },
+  "Log Variable Value": {
+    "scope": "javascript",
+    "prefix": "log1",
+    "body": [
+      "console.log('${TM_FILENAME}:%d $1: %o', 0 ${BLOCK_COMMENT_START} lineNumber ${BLOCK_COMMENT_END}, $1); ${LINE_COMMENT} REMOVE"
+    ],
+    "description": "Log variable value to console"
+  }
+}

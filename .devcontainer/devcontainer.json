@@ -1,0 +1,67 @@
+{
+  "capAdd": [
+    "SYS_PTRACE"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "streetsidesoftware.code-spell-checker",
+        "esbenp.prettier-vscode",
+        "Gruntfuggly.todo-tree",
+        "DavidAnson.vscode-markdownlint",
+        "usernamehw.errorlens",
+        "gurumukhi.selected-lines-count",
+        "bradzacher.vscode-copy-filename",
+        "PKief.material-icon-theme",
+        "SonarSource.sonarlint-vscode"
+      ],
+      "settings": {
+        "C_Cpp.autocompleteAddParentheses": true,
+        "C_Cpp.codeAnalysis.clangTidy.enabled": true,
+        "C_Cpp.intelliSenseEngine": "default",
+        "editor.bracketPairColorization.enabled": true,
+        "editor.comments.insertSpace": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.detectIndentation": false,
+        "editor.insertSpaces": true,
+        "editor.snippetSuggestions": "top",
+        "editor.tabCompletion": "on",
+        "editor.tabSize": 2,
+        "editor.trimAutoWhitespace": true,
+        "explorer.confirmDelete": false,
+        "extensions.autoUpdate": true,
+        "extensions.ignoreRecommendations": true,
+        "files.associations": {
+          "*.code-snippets": "jsonc"
+        },
+        "files.autoSave": "afterDelay",
+        "files.eol": "auto",
+        "files.exclude": {
+          "**/.vscode": true
+        },
+        "search.exclude": {
+          "**/*.code-search": true,
+          "**/*.git": true,
+          "**/*.vscode-server": true,
+          "**/bower_components": true,
+          "**/node_modules": true
+        },
+        "windows.title": "${folderPath}",
+        "workbench.iconTheme": "material-icon-theme",
+        "workbench.startupEditor": "none"
+      }
+    }
+  },
+  "features": {
+    "ghcr.io/gvatsal60/dev-container-features/sonarlint": {}
+  },
+  "image": "mcr.microsoft.com/devcontainers/base:jammy",
+  "mounts": [
+    "source=${localWorkspaceFolder}/snippets,target=${containerWorkspaceFolder}/.vscode,type=bind,consistency=cached,readonly"
+  ],
+  "postCreateCommand": "chmod +x ${containerWorkspaceFolder}/.devcontainer/postCreateScript.sh && ${containerWorkspaceFolder}/.devcontainer/postCreateScript.sh",
+  "runArgs": [
+    "--rm",
+    "--name=vsc-${localEnv:USER}-${containerWorkspaceFolderBasename}-${devcontainerId}"
+  ]
+}
