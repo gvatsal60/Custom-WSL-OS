@@ -1,0 +1,45 @@
+name: Build and Push Docker Image
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dockerfile:
+          - Dockerfile.ubuntu
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Log in to GitHub Docker registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # Assign environment variables used in subsequent steps
+      - name: Env IMG_REPO_NAME Assignment
+        run: echo "IMG_REPO_NAME=$(echo ${{ matrix.dockerfile }} | sed 's/^Dockerfile\.\(.*\)$/\1/' | tr '[:upper:]' '[:lower:]')-wsl" >> "${GITHUB_ENV}"
+      # TAG_NAME defaults to 'latest' if not a release or manual deployment
+      - name: Assign TAG_NAME
+        run: |
+          echo "TAG_NAME=latest" >> "${GITHUB_ENV}"
+          if [ "${{ github.event.release.tag_name }}" != "" ]; then
+            echo "TAG_NAME=${{ github.event.release.tag_name }}" >> "${GITHUB_ENV}"
+          fi;
+          if [ "${{ github.event.inputs.version }}" != "" ]; then
+            echo "TAG_NAME=${{ github.event.inputs.version }}" >> "${GITHUB_ENV}"
+          fi;
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: Dockerfiles
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ghcr.io/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
+          cache-from: type=registry,ref=ghcr.io/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
+          cache-to: type=registry,ref=ghcr.io/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }},mode=max

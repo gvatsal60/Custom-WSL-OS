@@ -1,0 +1,75 @@
+/**
+ * @file dockerfile.code-snippets
+ * @brief Contains custom code snippets for Dockerfile
+ *
+ * This file provides a collection of code snippets designed to facilitate rapid
+ * development by offering quick access to commonly used patterns and boilerplate
+ * code. The snippets include function templates, common data structures, and
+ * useful macros.
+ *
+ * To utilize these snippets, integrate this file into your IDE's snippet manager
+ * or configuration. Feel free to modify and expand the snippets to meet your
+ * specific coding requirements.
+ */
+{
+  /***************************************************************************************
+   * File Template
+   **************************************************************************************/
+  "Dockerfile File Template": {
+    "scope": "dockerfile",
+    "prefix": "template",
+    "body": [
+      "# ##########################################################################",
+      "# File: ${TM_FILENAME}",
+      "# Author: ${USER:Vatsal Gupta (gvatsal60)}",
+      "# Date: ${CURRENT_DATE}-${CURRENT_MONTH_NAME_SHORT}-${CURRENT_YEAR}",
+      "# Description: Brief description of the Dockerfile purpose.",
+      "# ##########################################################################",
+      "",
+      "# ##########################################################################",
+      "# License",
+      "# ##########################################################################",
+      "# This Dockerfile is licensed under the Apache 2.0 License.",
+      "",
+      "# ##########################################################################",
+      "# Base Image",
+      "# ##########################################################################",
+      "FROM $1 AS base ",
+      "",
+      "# ##########################################################################",
+      "# Maintainer",
+      "# ##########################################################################",
+      "LABEL maintainer=\"${USER:Vatsal Gupta (gvatsal60)}\"",
+      "",
+      "# ##########################################################################",
+      "# Copy Files",
+      "# ##########################################################################",
+      "",
+      "# ##########################################################################",
+      "# Install Dependencies",
+      "# ##########################################################################",
+      "",
+      "# ##########################################################################",
+      "# Set Working Directory",
+      "# ##########################################################################",
+      "WORKDIR /",
+      "",
+      "# ##########################################################################",
+      "# Expose Port",
+      "# ##########################################################################",
+      "EXPOSE 8080",
+      "",
+      "# ##########################################################################",
+      "# Command to Run",
+      "# ##########################################################################",
+      "CMD [\"/bin/bash\"]",
+      ""
+    ],
+    "description": "dockerfile file template",
+    "isFileTemplate": true
+  }
+  /***************************************************************************************
+   * Debugging
+   **************************************************************************************/
+  // TODO
+}
