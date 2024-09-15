@@ -42,7 +42,7 @@ jobs:
           context: Dockerfiles
           file: Dockerfiles/${{ matrix.dockerfile }}
           push: false
-          tags: ghcr.io/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
+          tags: ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
       - name: Build and push Docker image
         if: github.event_name == 'push'
         uses: docker/build-push-action@v6
@@ -50,6 +50,6 @@ jobs:
           context: Dockerfiles
           file: Dockerfiles/${{ matrix.dockerfile }}
           push: true
-          tags: ghcr.io/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
-          cache-from: type=registry,ref=ghcr.io/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
-          cache-to: type=registry,ref=ghcr.io/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }},mode=max
+          tags: ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
+          cache-to: type=registry,ref=ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }},mode=max
