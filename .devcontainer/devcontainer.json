@@ -9,16 +9,40 @@
         "esbenp.prettier-vscode",
         "Gruntfuggly.todo-tree",
         "DavidAnson.vscode-markdownlint",
-        "usernamehw.errorlens",
         "gurumukhi.selected-lines-count",
         "bradzacher.vscode-copy-filename",
         "PKief.material-icon-theme",
-        "SonarSource.sonarlint-vscode"
+        "timonwong.shellcheck",
+        "foxundermoon.shell-format",
+        "usernamehw.errorlens",
+        "mads-hartmann.bash-ide-vscode",
+        "SonarSource.sonarlint-vscode",
+        "ms-azuretools.vscode-docker",
+        "Tyriar.sort-lines"
       ],
       "settings": {
-        "C_Cpp.autocompleteAddParentheses": true,
-        "C_Cpp.codeAnalysis.clangTidy.enabled": true,
-        "C_Cpp.intelliSenseEngine": "default",
+        "[dockercompose]": {
+          "editor.autoIndent": "advanced",
+          "editor.defaultFormatter": "ms-azuretools.vscode-docker",
+          "editor.insertSpaces": true,
+          "editor.quickSuggestions": {
+            "comments": false,
+            "other": true,
+            "strings": true
+          },
+          "editor.tabSize": 2
+        },
+        "[dockerfile]": {
+          "editor.defaultFormatter": "ms-azuretools.vscode-docker",
+          "editor.quickSuggestions": {
+            "strings": true
+          }
+        },
+        "[shellscript]": {
+          "editor.defaultFormatter": "foxundermoon.shell-format",
+          "editor.tabSize": 4,
+          "files.eol": "\n"
+        },
         "editor.bracketPairColorization.enabled": true,
         "editor.comments.insertSpace": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -53,6 +77,7 @@
     }
   },
   "features": {
+    "ghcr.io/gvatsal60/dev-container-features/pre-commit": {},
     "ghcr.io/gvatsal60/dev-container-features/sonarlint": {}
   },
   "image": "mcr.microsoft.com/devcontainers/base:jammy",

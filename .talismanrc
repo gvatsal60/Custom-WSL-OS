@@ -1,0 +1,6 @@
+fileignoreconfig:
+- filename: .github/workflows/docker-img-push.yaml
+  checksum: 9dddde1e34a9d18caae6994db2550ae7c0056c208616da42ce932ae7a675e628
+- filename: Dockerfiles/scripts/debian-util.sh
+  checksum: 10f5e39faa9d77de5c71f8ea285c601502f8b2ecf2b0007c4a02f31067ff4639
+version: ""

@@ -1,0 +1,105 @@
+# ##########################################################################
+# File: Dockerfile.ubuntu
+# Author: Vatsal Gupta (gvatsal60)
+# Date: 14-Sep-2024
+# Description: Brief description of the Dockerfile purpose.
+# ##########################################################################
+
+# ##########################################################################
+# License
+# ##########################################################################
+# This Dockerfile is licensed under the Apache 2.0 License.
+
+# ##########################################################################
+# Base Image
+# ##########################################################################
+FROM ubuntu:noble AS base
+
+# ##########################################################################
+# Maintainer
+# ##########################################################################
+LABEL maintainer="Vatsal Gupta (gvatsal60)"
+
+# ##########################################################################
+# Install Dependencies
+# ##########################################################################
+# Define the arguments
+ARG HELPER_SCRIPT_SRC="scripts"
+ARG HELPER_SCRIPT="debian-util.sh"
+ARG USERNAME="ubuntu"
+ARG USER_UID=1000
+ARG USER_GID=${USER_UID}
+
+RUN apt-get update \
+  && apt-get -y install --no-install-recommends \
+  apt-transport-https \
+  apt-utils \
+  bash-completion \
+  build-essential \
+  ca-certificates \
+  curl \
+  dialog \
+  dirmngr \
+  git \
+  gnupg2 \
+  htop \
+  init-system-helpers \
+  iproute2 \
+  jq \
+  less \
+  libc6 \
+  libgssapi-krb5-2 \
+  libicu[0-9][0-9] \
+  libkrb5-3 \
+  liblttng-ust[0-9] \
+  libstdc++6 \
+  locales \
+  lsb-release \
+  lsof \
+  man-db \
+  manpages \
+  manpages-dev \
+  nano \
+  ncdu \
+  net-tools \
+  openssh-client \
+  procps \
+  psmisc \
+  rsync \
+  strace \
+  sudo \
+  unzip \
+  vim-tiny \
+  wget \
+  zip \
+  zlib1g \
+  && apt-get -y clean \
+  && rm -rf /var/lib/apt/lists/*
+
+# ##########################################################################
+# Copy Files
+# ##########################################################################
+# Copy the helper script from the 'scripts' directory into the /tmp/scripts directory
+COPY "${HELPER_SCRIPT_SRC}/${HELPER_SCRIPT}" "/tmp/${HELPER_SCRIPT_SRC}/"
+
+# ##########################################################################
+# Set Working Directory
+# ##########################################################################
+
+# ##########################################################################
+# Expose Port
+# ##########################################################################
+
+# ##########################################################################
+# Command to Run
+# ##########################################################################
+# Run a series of commands:
+# 1. Use 'yes' to automatically respond with 'y' to any prompts from 'unminimize'
+# 2. Execute the 'debian-util.sh' script with USERNAME as an argument
+# 3. Clean up APT caches to reduce image size
+# 4. Remove temporary files and directories
+RUN bash "/tmp/${HELPER_SCRIPT_SRC}/${HELPER_SCRIPT}" "${USERNAME}" "${USER_UID}" "${USER_GID}" \
+  && apt-get clean -y \
+  && rm -rf /var/lib/apt/lists/* "/tmp/${HELPER_SCRIPT_SRC}/"
+
+CMD ["/bin/bash"]

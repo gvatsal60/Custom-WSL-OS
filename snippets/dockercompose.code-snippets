@@ -1,6 +1,6 @@
 /**
- * @file sh.code-snippets
- * @brief Contains custom code snippets for Shellscript
+ * @file dockercompose.code-snippets
+ * @brief Contains custom code snippets for Docker Compose
  *
  * This file provides a collection of code snippets designed to facilitate rapid
  * development by offering quick access to commonly used patterns and boilerplate
@@ -15,12 +15,10 @@
   /***************************************************************************************
    * File Template
    **************************************************************************************/
-  "Shell Script Template": {
-    "scope": "shellscript",
+  "Docker Compose File Template": {
+    "scope": "dockercompose",
     "prefix": "template",
     "body": [
-      "#!/bin/sh",
-      "",
       "##########################################################################################",
       "# File: ${TM_FILENAME}",
       "# Author: ${USER:Vatsal Gupta (gvatsal60)}",
@@ -31,44 +29,28 @@
       "##########################################################################################",
       "# License",
       "##########################################################################################",
-      "# This script is licensed under the Apache 2.0 License.",
+      "# This Docker Compose file is licensed under the Apache 2.0 License.",
       "",
-      "##########################################################################################",
-      "# Constants",
-      "##########################################################################################",
-      "",
-      "##########################################################################################",
-      "# Functions",
       "##########################################################################################",
       "",
       "##########################################################################################",
-      "# Main Script",
+      "# Services",
       "##########################################################################################",
       "",
-      "# Main script logic goes here",
-      ""
+      "##########################################################################################",
+      "# Main Docker Compose Configuration",
+      "##########################################################################################",
+      "",
+      "",
+      "##########################################################################################",
+      "# End of Docker Compose Configuration",
+      "##########################################################################################"
     ],
-    "description": "Shell script file template",
+    "description": "docker compose file template",
     "isFileTemplate": true
-  },
-  "Functions Header": {
-    "scope": "shellscript",
-    "prefix": "fhead",
-    "body": [
-      "# Function: ${1}",
-      "# Description: Brief description of the function purpose.",
-    ],
-    "description": "Quickly insert a function header"
-  },
+  }
   /***************************************************************************************
    * Debugging
    **************************************************************************************/
-  "Print Hex Value": {
-    "scope": "shellscript",
-    "prefix": "hlog",
-    "body": [
-      "printf \"%s: '$1': 0x%X\\n\" \"${TM_FILENAME}\" \"$$1\" ${LINE_COMMENT} REMOVE"
-    ],
-    "description": "Print hex value to console"
-  }
+  // TODO
 }

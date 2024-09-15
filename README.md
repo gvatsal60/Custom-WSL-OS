@@ -1,4 +1,4 @@
-# Project Template
+# Custom WSL OS
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://img.shields.io/github/license/gvatsal60/project-template)
 [![build status](https://github.com/gvatsal60/project-template/actions/workflows/readme-checker.yaml/badge.svg)](https://github.com/gvatsal60/project-template/actions/workflows/readme-checker.yaml)
@@ -34,6 +34,11 @@ To install Project Template, follow these steps:
    * Replace `[Project Name]`
    * Update `[contact email]`
    * Follow `[coding style guide]`
+
+## Build Image
+```bash
+docker compose build
+```
 
 ## Contributing
 
