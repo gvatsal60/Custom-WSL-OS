@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+  pull_request:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,7 +40,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: Dockerfiles
-          file: ${{ matrix.dockerfile }}
+          file: Dockerfiles/${{ matrix.dockerfile }}
           push: false
           tags: ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
       - name: Build and push Docker image
@@ -47,7 +48,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: Dockerfiles
-          file: ${{ matrix.dockerfile }}
+          file: Dockerfiles/${{ matrix.dockerfile }}
           push: true
           tags: ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
           cache-from: type=registry,ref=ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}

@@ -23,14 +23,7 @@ maintaining code quality and documentation consistency. It includes:
 
 To install Project Template, follow these steps:
 
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/gvatsal60/project-template.git
-   cd project-template
-   ```
-
-2. **Customize According to Your Project:**
+1. **Customize According to Your Project:**
    * Replace `[Project Name]`
    * Update `[contact email]`
    * Follow `[coding style guide]`
