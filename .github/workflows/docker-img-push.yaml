@@ -44,6 +44,7 @@ jobs:
           context: Dockerfiles
           file: Dockerfiles/${{ matrix.dockerfile }}
           push: false
+          load: true
           tags: ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
       - name: Build and push Docker image
         if: github.event_name == 'push'
@@ -52,12 +53,12 @@ jobs:
           context: Dockerfiles
           file: Dockerfiles/${{ matrix.dockerfile }}
           push: true
+          load: true
           tags: ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
           cache-from: type=registry,ref=ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
           cache-to: type=registry,ref=ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }},mode=max
       - name: Save Docker image to tarball
         run: |
-          docker image ls
           docker save ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }} -o ${{ env.IMG_REPO_NAME }}.tar
       - name: Create GitHub release
         if: github.event_name == 'push'
