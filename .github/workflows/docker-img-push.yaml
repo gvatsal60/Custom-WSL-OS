@@ -56,9 +56,9 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
           cache-to: type=registry,ref=ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }},mode=max
       - name: Save Docker image to tarball
-        if: github.event_name == 'push'
         run: |
-          docker save ${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }} -o ${{ env.IMG_REPO_NAME }}.tar
+          docker image ls
+          docker save ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }} -o ${{ env.IMG_REPO_NAME }}.tar
       - name: Create GitHub release
         if: github.event_name == 'push'
         uses: actions/create-release@v1
