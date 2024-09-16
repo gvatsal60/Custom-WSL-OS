@@ -58,7 +58,7 @@ jobs:
       - name: Save Docker image to tarball
         if: github.event_name == 'push'
         run: |
-          docker save ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }} -o ${{ env.IMG_REPO_NAME }}.tar
+          docker save ${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }} -o ${{ env.IMG_REPO_NAME }}.tar
       - name: Create GitHub release
         if: github.event_name == 'push'
         uses: actions/create-release@v1
