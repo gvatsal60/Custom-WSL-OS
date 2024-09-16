@@ -57,7 +57,26 @@ jobs:
           tags: ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
       - name: Save Docker image to tarball
         run: |
-          docker save ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }} -o ${{ env.IMG_REPO_NAME }}.tar
+          docker run -t --name wsl_export ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }} ls
+          docker export wsl_export > ${{ env.IMG_REPO_NAME }}.tar
+      - name: Check if release exists
+        id: check-release
+        run: |
+          response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ env.TAG_NAME }}")
+          if echo "$response" | grep -q '"tag_name":'; then
+            release_id=$(echo "$response" | jq -r '.id')
+            echo "RELEASE_EXISTS=true" >> $GITHUB_ENV
+            echo "RELEASE_ID=$release_id" >> $GITHUB_ENV
+          else
+            echo "RELEASE_EXISTS=false" >> $GITHUB_ENV
+          fi
+      - name: Delete existing release
+        if: env.RELEASE_EXISTS == 'true'
+        run: |
+          echo "Deleting existing release with ID ${{ env.RELEASE_ID }}"
+          curl -s -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/${{ env.RELEASE_ID }}"
       - name: Create GitHub release
         if: github.event_name == 'push'
         uses: actions/create-release@v1
@@ -65,7 +84,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.TAG_NAME }}
-          release_name: ${{ env.IMG_REPO_NAME }}
+          release_name: Release ${{ env.IMG_REPO_NAME }}
           draft: false
           prerelease: false
         id: create_release
