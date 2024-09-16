@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - 'v*'
   pull_request:
 jobs:
   build:
@@ -53,3 +55,24 @@ jobs:
           tags: ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
           cache-from: type=registry,ref=ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
           cache-to: type=registry,ref=ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }},mode=max
+      - name: Save Docker image to tarball
+        if: github.event_name == 'push'
+        run: |
+          docker save ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }} -o ${{ env.IMG_REPO_NAME }}.tar
+      - name: Create GitHub release
+        if: github.event_name == 'push'
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          release_name: Release ${{ env.TAG_NAME }}
+          draft: false
+          prerelease: false
+        id: create_release
+      - name: Upload tar as release asset
+        if: github.event_name == 'push'
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ env.IMG_REPO_NAME }}.tar
+          asset_name: ${{ env.IMG_REPO_NAME }}.tar
+          asset_content_type: application/x-tar
