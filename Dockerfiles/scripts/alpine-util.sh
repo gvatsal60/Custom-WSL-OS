@@ -1,15 +1,15 @@
-#!/bin/bash
+#!/bin/dash
 
 ##########################################################################################
-# File: debian-util.sh
+# File: alpine-util.sh
 # Author: Vatsal Gupta (gvatsal60)
-# Date: 14-Sep-2024
+# Date: 17-Sep-2024
 # Description:
 # This script contains utility functions and common operations for managing
-# a Debian-based system. It includes functions for system maintenance,
+# a Alpine-based system. It includes functions for system maintenance,
 # package management, and configuration tasks. The script is designed to
 # simplify and automate common administrative tasks, ensuring a consistent
-# setup across multiple Debian-based environments.
+# setup across multiple Alpine-based environments.
 ##########################################################################################
 
 ##########################################################################################
@@ -23,8 +23,12 @@
 # Exit the script immediately if any command fails
 set -e
 
-# Ensure apt is in non-interactive to avoid prompts
-export DEBIAN_FRONTEND=noninteractive
+# Set non-interactive mode (not strictly necessary for apk, but included for completeness)
+export APK_INTERACTIVE="false"
+
+# Select the en_US.UTF-8 UTF-8 locale is available
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 
 # Set default username if not provided as an argument
 USERNAME=${1:-"root"}
@@ -56,10 +60,10 @@ parse_git_branch() {
 PS1="${COLOR_USR}\u@\h ${COLOR_DIR}\w ${COLOR_GIT}\$(parse_git_branch)${COLOR_DEF}${NEWLINE}\$ "
 
 # Personal Aliases
-alias sou='. ${HOME}/.bashrc'
+alias sou='. ${HOME}/.profile'
 
 # Add 'update' as an alias in 'bash_history'
-echo -e 'update' >> ${HOME}/.bash_history
+echo -e 'update' >> ${HOME}/.ash_history
 
 EOF
 )"
@@ -103,27 +107,6 @@ print_err() {
     printf "%s\n" "$*" 2>/dev/null >&2
 }
 
-# Function: docker_install
-# Description: Installs Docker and Docker Compose on a Debian-based system.
-docker_install() {
-    # Add Docker's official GPG key:
-    apt-get update
-    apt-get -y install --no-install-recommends ca-certificates curl
-    install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-    chmod a+r /etc/apt/keyrings/docker.asc
-
-    # Add the repository to Apt sources:
-    # shellcheck source=/dev/null
-    echo \
-        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" |
-        sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
-    apt-get update
-    apt-get -y install --no-install-recommends docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-    println "==> Docker is successfully installed."
-}
-
 ##########################################################################################
 # Main Script
 ##########################################################################################
@@ -135,23 +118,22 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 # Ensure that login shells get the correct path if the user updated the PATH using ENV.
-rm -f /etc/profile.d/00-restore-env.sh
-echo "export PATH=${PATH//$(sh -lc 'echo $PATH')/\$PATH}" >/etc/profile.d/00-restore-env.sh
-chmod +x /etc/profile.d/00-restore-env.sh
+# rm -f /etc/profile.d/00-restore-env.sh
+# echo "export PATH=${PATH//$(sh -lc "echo \$PATH")/\$PATH}" > /etc/profile.d/00-restore-env.sh
+# chmod +x /etc/profile.d/00-restore-env.sh
 
-# Install Required Packages
-if type apt-get >/dev/null 2>&1; then
-    docker_install
-    apt-get -y upgrade --no-install-recommends
-    apt-get -y autoremove
+# Update rc-service
+if type rc-update >/dev/null 2>&1; then
+    rc-update add docker
 else
-    print_err "==> Error: Unsupported or unrecognized package manager"
+    print_err "==> Error: Unsupported or unrecognized service."
 fi
 
 # Ensure at least the en_US.UTF-8 UTF-8 locale is available.
-if [ "${LOCALE_ALREADY_SET}" != "true" ] && ! grep -o -E '^\s*en_US.UTF-8\s+UTF-8' /etc/locale.gen >/dev/null; then
-    println "en_US.UTF-8 UTF-8" >>/etc/locale.gen
-    locale-gen
+if [ "${LOCALE_ALREADY_SET}" != "true" ]; then
+    println 'export LC_ALL=en_GB.UTF-8' >>/etc/profile.d/locale.sh
+    sed -i 's|LANG=C.UTF-8|LANG=en_GB.UTF-8|' /etc/profile.d/locale.sh
+    locale
     LOCALE_ALREADY_SET="true"
 fi
 
@@ -191,7 +173,7 @@ fi
 # Add sudo support for non-root user
 if [ "${USERNAME}" != "root" ] && [ "${EXISTING_NON_ROOT_USER}" != "${USERNAME}" ]; then
     # Create or update the sudoers file with the correct configuration
-    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/${USERNAME}" > /dev/null
+    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/${USERNAME}" >/dev/null
     chmod 0440 "/etc/sudoers.d/${USERNAME}"
     EXISTING_NON_ROOT_USER="${USERNAME}"
 fi
@@ -223,12 +205,12 @@ fi
 
 # Add RC snippet and custom bash prompt
 # Check if the user exists
-if id "${USERNAME}" &>/dev/null; then
-    println "${rc_snippet}" >>"${user_rc_path}/.bashrc"
-    println 'export PROMPT_DIRTRIM=4' >>"${user_rc_path}/.bashrc"
-    chown "${USERNAME}":"${group_name}" "${user_rc_path}/.bashrc"
+if id "${USERNAME}" >/dev/null 2>&1; then
+    println "${rc_snippet}" >>"${user_rc_path}/.profile"
+    println 'export PROMPT_DIRTRIM=4' >>"${user_rc_path}/.profile"
+    chown "${USERNAME}":"${group_name}" "${user_rc_path}/.profile"
 else
-    println "${rc_snippet}" >>/etc/bash.bashrc
+    println "${rc_snippet}" >>/etc/profile
 fi
 
 # Configure WSL Startup Script
