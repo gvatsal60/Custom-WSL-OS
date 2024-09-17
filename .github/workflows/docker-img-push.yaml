@@ -37,6 +37,13 @@ jobs:
           if [ "${{ github.event.inputs.version }}" != "" ]; then
             echo "TAG_NAME=${{ github.event.inputs.version }}" >> "${GITHUB_ENV}"
           fi;
+      - name: Set variable based on actor
+        run: |
+          if [[ "${{ github.actor }}" == *"bot"* ]]; then
+            echo "GITHUB_ACTOR=bot" >> $GITHUB_ENV
+          else
+            echo "GITHUB_ACTOR=${{ github.actor }}" >> $GITHUB_ENV
+          fi
       - name: Build Docker image only
         if: github.event_name == 'pull_request'
         uses: docker/build-push-action@v6
@@ -45,7 +52,7 @@ jobs:
           file: Dockerfiles/${{ matrix.dockerfile }}
           push: false
           load: true
-          tags: ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
+          tags: ghcr.io/${{ env.GITHUB_ACTOR }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
       - name: Build and push Docker image
         if: github.event_name == 'push'
         uses: docker/build-push-action@v6
@@ -54,10 +61,10 @@ jobs:
           file: Dockerfiles/${{ matrix.dockerfile }}
           push: true
           load: true
-          tags: ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
+          tags: ghcr.io/${{ env.GITHUB_ACTOR }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
       - name: Save Docker image to tarball
         run: |
-          docker run -t --name wsl_export ghcr.io/${{ github.actor }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }} ls
+          docker run -t --name wsl_export ghcr.io/${{ env.GITHUB_ACTOR }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }} ls
           docker export wsl_export > ${{ env.IMG_REPO_NAME }}.tar
       - name: Check if release exists
         id: check-release
