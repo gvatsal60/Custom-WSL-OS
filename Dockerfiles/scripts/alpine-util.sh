@@ -148,39 +148,43 @@ if id -u "${USERNAME}" >/dev/null 2>&1; then
 
     if [ -n "${USER_GID}" ] && [ "${USER_GID}" -ne "${current_gid}" ]; then
         group_name="$(id -gn "${USERNAME}")"
-        groupmod --gid "${USER_GID}" "${group_name}"
-        usermod --gid "${USER_GID}" "${USERNAME}"
+        addgroup -g "${USER_GID}" "${group_name}" || exit 1
+        deluser "${USERNAME}" "${group_name}" || exit 1
+        adduser "${USERNAME}" "${group_name}" || exit 1
     fi
 
     if [ -n "${USER_UID}" ] && [ "${USER_UID}" -ne "${current_uid}" ]; then
-        usermod --uid "${USER_UID}" "${USERNAME}"
+        # Changing UID directly is not supported; we have to recreate the user
+        current_groups=$(id -Gn "${USERNAME}" | tr ' ' ',')
+        deluser "${USERNAME}" || exit 1
+        adduser -u "${USER_UID}" -G "${current_groups}" -s /bin/sh -D "${USERNAME}" || exit 1
     fi
 else
     # Create user
     if [ -n "${USER_GID}" ]; then
-        groupadd --gid "${USER_GID}" "${USERNAME}"
+        addgroup -g "${USER_GID}" "${USERNAME}"
     else
-        groupadd "${USERNAME}"
+        addgroup "${USERNAME}"
     fi
 
     if [ -n "${USER_UID}" ]; then
-        useradd -s /bin/bash --uid "${USER_UID}" --gid "${USERNAME}" -m "${USERNAME}"
+        adduser -u "${USER_UID}" -G "${USERNAME}" -s /bin/sh -D "${USERNAME}"
     else
-        useradd -s /bin/bash --gid "${USERNAME}" -m "${USERNAME}"
+        adduser -G "${USERNAME}" -s /bin/sh -D "${USERNAME}"
     fi
 fi
 
 # Add sudo support for non-root user
 if [ "${USERNAME}" != "root" ] && [ "${EXISTING_NON_ROOT_USER}" != "${USERNAME}" ]; then
     # Create or update the sudoers file with the correct configuration
-    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/${USERNAME}" >/dev/null
+    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${USERNAME}" >/dev/null
     chmod 0440 "/etc/sudoers.d/${USERNAME}"
     EXISTING_NON_ROOT_USER="${USERNAME}"
 fi
 
 # Add ${USER} to 'docker' group if the group exists
 if getent group docker >/dev/null; then
-    usermod -aG docker "${USERNAME}"
+    addgroup "${USERNAME}" docker || exit 1
 else
     print_err "==> Error: 'docker' group does not exist."
     exit 1
@@ -191,16 +195,6 @@ if [ "${USERNAME}" = "root" ]; then
     user_rc_path="/root"
 else
     user_rc_path="/home/${USERNAME}"
-fi
-
-# Restore user .bashrc defaults from skeleton file if it doesn't exist or is empty
-if [ ! -f "${user_rc_path}/.bashrc" ] || [ ! -s "${user_rc_path}/.bashrc" ]; then
-    cp /etc/skel/.bashrc "${user_rc_path}/.bashrc"
-fi
-
-# Restore user .profile defaults from skeleton file if it doesn't exist or is empty
-if [ ! -f "${user_rc_path}/.profile" ] || [ ! -s "${user_rc_path}/.profile" ]; then
-    cp /etc/skel/.profile "${user_rc_path}/.profile"
 fi
 
 # Add RC snippet and custom bash prompt
