@@ -6,7 +6,7 @@ repos:
       - id: sync-pre-commit-deps
   # Pre-commit hooks for general file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v4.6.0"
+    rev: "v5.0.0"
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -69,7 +69,7 @@ repos:
       - id: codespell
   # Gitleaks for detecting secrets in Git repositories
   - repo: https://github.com/gitleaks/gitleaks
-    rev: "v8.19.3"
+    rev: "v8.20.1"
     hooks:
       - id: gitleaks
   # Talisman for pre-commit Git hooks to detect sensitive files
