@@ -1,6 +1,5 @@
 name: markdown-lint
 on:
-  push:
   pull_request:
 jobs:
   lint:
@@ -9,7 +8,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       - name: Markdown Lint
-        uses: DavidAnson/markdownlint-cli2-action@v16
+        uses: DavidAnson/markdownlint-cli2-action@v18
         with:
           fix: true
           globs: |
