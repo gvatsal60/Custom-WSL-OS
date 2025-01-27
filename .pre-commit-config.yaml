@@ -64,12 +64,12 @@ repos:
       - id: yamlfmt
   # Codespell for detecting common misspellings in code
   - repo: https://github.com/codespell-project/codespell
-    rev: "v2.3.0"
+    rev: "v2.4.0"
     hooks:
       - id: codespell
   # Gitleaks for detecting secrets in Git repositories
   - repo: https://github.com/gitleaks/gitleaks
-    rev: "v8.23.1"
+    rev: "v8.23.2"
     hooks:
       - id: gitleaks
   # Talisman for pre-commit Git hooks to detect sensitive files
