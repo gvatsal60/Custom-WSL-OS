@@ -47,7 +47,7 @@ readonly ALIAS_SOURCE_URL="https://raw.githubusercontent.com/gvatsal60/Linux-Ali
 # Install Linux aliases from external script using curl and execute immediately
 # Note: Make sure to review scripts fetched from external sources for security reasons
 if command -v curl >/dev/null 2>&1; then
-    curl -fsSL ${ALIAS_SOURCE_URL} | sh
+    curl -fsSL "${ALIAS_SOURCE_URL}" | sh
 else
     echo "Error: curl is not installed. Unable to use Linux aliases"
     exit 1
