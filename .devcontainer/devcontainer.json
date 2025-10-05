@@ -5,20 +5,18 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "streetsidesoftware.code-spell-checker",
-        "esbenp.prettier-vscode",
-        "Gruntfuggly.todo-tree",
         "DavidAnson.vscode-markdownlint",
-        "gurumukhi.selected-lines-count",
-        "bradzacher.vscode-copy-filename",
-        "PKief.material-icon-theme",
-        "timonwong.shellcheck",
-        "foxundermoon.shell-format",
-        "usernamehw.errorlens",
-        "mads-hartmann.bash-ide-vscode",
+        "Gruntfuggly.todo-tree",
         "SonarSource.sonarlint-vscode",
+        "Tyriar.sort-lines",
+        "bradzacher.vscode-copy-filename",
+        "esbenp.prettier-vscode",
+        "foxundermoon.shell-format",
+        "mads-hartmann.bash-ide-vscode",
         "ms-azuretools.vscode-docker",
-        "Tyriar.sort-lines"
+        "streetsidesoftware.code-spell-checker",
+        "timonwong.shellcheck",
+        "usernamehw.errorlens"
       ],
       "settings": {
         "[dockercompose]": {
@@ -53,7 +51,6 @@
         "editor.tabSize": 2,
         "editor.trimAutoWhitespace": true,
         "explorer.confirmDelete": false,
-        "extensions.autoUpdate": true,
         "extensions.ignoreRecommendations": true,
         "files.associations": {
           "*.code-snippets": "jsonc"
@@ -70,17 +67,14 @@
           "**/bower_components": true,
           "**/node_modules": true
         },
-        "windows.title": "${folderPath}",
-        "workbench.iconTheme": "material-icon-theme",
         "workbench.startupEditor": "none"
       }
     }
   },
   "features": {
-    "ghcr.io/gvatsal60/dev-container-features/pre-commit": {},
-    "ghcr.io/gvatsal60/dev-container-features/sonarlint": {}
+    "ghcr.io/gvatsal60/dev-container-features/pre-commit": {}
   },
-  "image": "mcr.microsoft.com/devcontainers/base:jammy",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node",
   "mounts": [
     "source=${localWorkspaceFolder}/snippets,target=${containerWorkspaceFolder}/.vscode,type=bind,consistency=cached,readonly"
   ],

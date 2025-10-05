@@ -91,16 +91,17 @@ EOF
 # Functions
 ##########################################################################################
 # Function: println
-# Description: Prints each argument on a new line, suppressing any error messages.
+# Description: Prints a message to the console, followed by a newline.
+# Usage: println "Your message here"
 println() {
-    command printf %s\\n "$*" 2>/dev/null
+    printf "%s\n" "$*" 2>/dev/null
 }
 
 # Function: print_err
-# Description: : Prints each argument on a new line to the standard error stream (stderr),
-#                while suppressing any error messages from printf
+# Description: Prints an error message to the console, followed by a newline.
+# Usage: print_err "Your error message here"
 print_err() {
-    printf "%s\n" "$*" 2>/dev/null >&2
+    printf "%s\n" "$*" >&2
 }
 
 # Function: docker_install

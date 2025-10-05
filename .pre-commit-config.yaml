@@ -1,12 +1,12 @@
 repos:
   # Syncs pre-commit dependencies with the latest versions.
   - repo: https://github.com/mxr/sync-pre-commit-deps
-    rev: "v0.0.1"
+    rev: "v0.0.3"
     hooks:
       - id: sync-pre-commit-deps
   # Pre-commit hooks for general file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v4.6.0"
+    rev: "v6.0.0"
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -37,7 +37,7 @@ repos:
       - id: trailing-whitespace
   # ShellCheck hook for linting shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: "v0.10.0.1"
+    rev: "v0.11.0.1"
     hooks:
       - id: shellcheck
         name: shellcheck
@@ -54,27 +54,33 @@ repos:
         types: [shell]
   # Actionlint for linting GitHub Actions YAML files
   - repo: https://github.com/rhysd/actionlint
-    rev: "v1.7.1"
+    rev: "v1.7.7"
     hooks:
       - id: actionlint
   # Yamlfmt for formatting YAML files
   - repo: https://github.com/google/yamlfmt
-    rev: "v0.13.0"
+    rev: "v0.17.2"
     hooks:
       - id: yamlfmt
   # Codespell for detecting common misspellings in code
   - repo: https://github.com/codespell-project/codespell
-    rev: "v2.3.0"
+    rev: "v2.4.1"
     hooks:
       - id: codespell
   # Gitleaks for detecting secrets in Git repositories
   - repo: https://github.com/gitleaks/gitleaks
-    rev: "v8.19.2"
+    rev: "v8.28.0"
     hooks:
       - id: gitleaks
   # Talisman for pre-commit Git hooks to detect sensitive files
   - repo: https://github.com/thoughtworks/talisman
-    rev: "v1.32.0"
+    rev: "v1.37.0"
     hooks:
       - id: talisman-commit
         entry: cmd --githook pre-commit
+  # Markdownlint for linting Markdown files
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: "v0.18.1"
+    hooks:
+      - id: markdownlint-cli2
+        args: [--fix]
