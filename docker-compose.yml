@@ -14,11 +14,16 @@
 # Services
 ##########################################################################################
 services:
-  ubuntu-wsl:
+  # ubuntu-wsl:
+  #   build:
+  #     context: Dockerfiles
+  #     dockerfile: Dockerfile.ubuntu
+  #   image: ubuntu-wsl:latest
+  alpine-wsl:
     build:
-      context: Dockerfiles # The build context (Dockerfile directory)
-      dockerfile: Dockerfile.ubuntu # The Dockerfile to use (optional if named Dockerfile)
-    image: ubuntu-wsl:latest # Tag for the built image
+      context: Dockerfiles
+      dockerfile: Dockerfile.alpine
+    image: alpine-wsl:latest
 
 ##########################################################################################
 # Main Docker Compose Configuration

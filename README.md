@@ -113,10 +113,10 @@ Welcome! This guide will walk you through the process of setting up Windows Subs
    Build and run the Docker containers:
 
    ```sh
-   docker-compose up --build
+   docker-compose build
    ```
 
-   This command will build the Docker image according to the Dockerfile and start the container as specified in docker-compose.yml.
+   This command will build the Docker image according to the Dockerfile as specified in docker-compose.yml.
 
 ## Additional Resources
 
