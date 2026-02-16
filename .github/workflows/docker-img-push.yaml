@@ -57,7 +57,7 @@ jobs:
           fi
       - name: Build Docker image only
         if: github.event_name == 'pull_request'
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
         with:
           context: Dockerfiles
           file: Dockerfiles/${{ matrix.dockerfile }}
@@ -66,7 +66,7 @@ jobs:
           tags: ghcr.io/${{ env.GITHUB_ACTOR }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
       - name: Build and push Docker image
         if: github.event_name == 'push'
-        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8
         with:
           context: Dockerfiles
           file: Dockerfiles/${{ matrix.dockerfile }}
