@@ -54,12 +54,12 @@ repos:
         types: [shell]
   # Actionlint for linting GitHub Actions YAML files
   - repo: https://github.com/rhysd/actionlint
-    rev: "v1.7.8"
+    rev: "v1.7.11"
     hooks:
       - id: actionlint
   # Yamlfmt for formatting YAML files
   - repo: https://github.com/google/yamlfmt
-    rev: "v0.20.0"
+    rev: "v0.21.0"
     hooks:
       - id: yamlfmt
   # Codespell for detecting common misspellings in code
@@ -69,7 +69,7 @@ repos:
       - id: codespell
   # Gitleaks for detecting secrets in Git repositories
   - repo: https://github.com/gitleaks/gitleaks
-    rev: "v8.28.0"
+    rev: "v8.30.0"
     hooks:
       - id: gitleaks
   # Talisman for pre-commit Git hooks to detect sensitive files
@@ -80,7 +80,7 @@ repos:
         entry: cmd --githook pre-commit
   # Markdownlint for linting Markdown files
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: "v0.18.1"
+    rev: "v0.21.0"
     hooks:
       - id: markdownlint-cli2
         args: [--fix]
