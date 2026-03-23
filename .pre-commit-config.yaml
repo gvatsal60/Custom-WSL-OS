@@ -69,7 +69,7 @@ repos:
       - id: codespell
   # Gitleaks for detecting secrets in Git repositories
   - repo: https://github.com/gitleaks/gitleaks
-    rev: "v8.30.1"
+    rev: "v8.30.0"
     hooks:
       - id: gitleaks
   # Talisman for pre-commit Git hooks to detect sensitive files
@@ -80,7 +80,7 @@ repos:
         entry: cmd --githook pre-commit
   # Markdownlint for linting Markdown files
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: "v0.21.0"
+    rev: "v0.22.0"
     hooks:
       - id: markdownlint-cli2
         args: [--fix]
