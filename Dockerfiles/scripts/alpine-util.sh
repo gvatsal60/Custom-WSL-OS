@@ -35,6 +35,25 @@ USERNAME=${1:-"root"}
 USER_UID=${2:-}
 USER_GID=${3:-}
 
+# Validate optional UID/GID inputs when provided
+case "${USER_UID}" in
+    "" | *[!0-9]*)
+        if [ -n "${USER_UID}" ]; then
+            printf "%s\n" "==> Error: USER_UID must be a numeric value." >&2
+            exit 1
+        fi
+        ;;
+esac
+
+case "${USER_GID}" in
+    "" | *[!0-9]*)
+        if [ -n "${USER_GID}" ]; then
+            printf "%s\n" "==> Error: USER_GID must be a numeric value." >&2
+            exit 1
+        fi
+        ;;
+esac
+
 # .bashrc snippet
 rc_snippet="$(
     cat <<'EOF'
@@ -104,8 +123,7 @@ println() {
 }
 
 # Function: print_err
-# Description: Prints each argument on a new line to the standard error stream (stderr),
-#                while suppressing any error messages from printf
+# Description: Prints each argument on a new line to the standard error stream (stderr).
 print_err() {
     printf "%s\n" "$*" >&2
 }
