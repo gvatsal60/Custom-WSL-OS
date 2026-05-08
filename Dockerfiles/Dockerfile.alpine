@@ -2,7 +2,9 @@
 # File: Dockerfile.alpine
 # Author: Vatsal Gupta (gvatsal60)
 # Date: 17-Sep-2024
-# Description: Brief description of the Dockerfile purpose.
+# Description: Dockerfile for building an Alpine Linux-based development
+# environment with common CLI tools, Docker support, and a configurable
+# non-root user via alpine-util.sh.
 # ##########################################################################
 
 # ##########################################################################
@@ -19,10 +21,6 @@ FROM alpine:3 AS base
 # Maintainer
 # ##########################################################################
 LABEL maintainer="Vatsal Gupta (gvatsal60)"
-
-# ##########################################################################
-# Copy Files
-# ##########################################################################
 
 # ##########################################################################
 # Install Dependencies
@@ -88,6 +86,6 @@ COPY "${HELPER_SCRIPT_SRC}/${HELPER_SCRIPT}" "/tmp/${HELPER_SCRIPT_SRC}/"
 # 1. Execute the 'alpine-util.sh' script with USERNAME as an argument
 # 2. Remove temporary files and directories
 RUN ash "/tmp/${HELPER_SCRIPT_SRC}/${HELPER_SCRIPT}" "${USERNAME}" "${USER_UID}" "${USER_GID}" \
-  && rm -rf /var/lib/apt/lists/* "/tmp/${HELPER_SCRIPT_SRC}/"
+  && rm -rf /var/cache/apk/* "/tmp/${HELPER_SCRIPT_SRC}/"
 
 CMD ["/bin/ash"]
