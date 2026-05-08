@@ -6,7 +6,7 @@
 # Date: 17-Sep-2024
 # Description:
 # This script contains utility functions and common operations for managing
-# a Alpine-based system. It includes functions for system maintenance,
+# an Alpine-based system. It includes functions for system maintenance,
 # package management, and configuration tasks. The script is designed to
 # simplify and automate common administrative tasks, ensuring a consistent
 # setup across multiple Alpine-based environments.
@@ -26,29 +26,30 @@ set -e
 # Set non-interactive mode (not strictly necessary for apk, but included for completeness)
 export APK_INTERACTIVE="false"
 
-# Select the en_US.UTF-8 UTF-8 locale is available
+# Ensure the en_US.UTF-8 UTF-8 locale is available
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
 # Set default username if not provided as an argument
 USERNAME=${1:-"root"}
-USER_UID=${2:-"root"}
-USER_GID=${3:-"root"}
+USER_UID=${2:-}
+USER_GID=${3:-}
 
 # .bashrc snippet
 rc_snippet="$(
     cat <<'EOF'
 
 # Add bin path
-if [[ "${PATH}" != *"${HOME}/.local/bin"* ]]; then
-    export PATH="${PATH}:${HOME}/.local/bin";
-fi
+case ":${PATH}:" in
+    *":${HOME}/.local/bin:"*) ;;
+    *) PATH="${PATH}:${HOME}/.local/bin"; export PATH ;;
+esac
 
 # Define colors
-COLOR_USR='\[\033[01;32m\]'  # User color
-COLOR_DIR='\[\033[01;34m\]'  # Directory color
-COLOR_GIT='\[\033[01;36m\]'  # Git branch color
-COLOR_DEF='\[\033[00m\]'     # Default color
+COLOR_USR='\033[01;32m'  # User color
+COLOR_DIR='\033[01;34m'  # Directory color
+COLOR_GIT='\033[01;36m'  # Git branch color
+COLOR_DEF='\033[00m'     # Default color
 NEWLINE='\n'                 # Newline character
 
 # Function to parse git branch (if available)
@@ -62,8 +63,10 @@ PS1="${COLOR_USR}\u@\h ${COLOR_DIR}\w ${COLOR_GIT}\$(parse_git_branch)${COLOR_DE
 # Personal Aliases
 alias sou='. ${HOME}/.profile'
 
-# Add 'update' as an alias in 'bash_history'
-echo -e 'update' >> ${HOME}/.ash_history
+# Add 'update' to ash history once
+if ! grep -qxF 'update' "${HOME}/.ash_history" 2>/dev/null; then
+    printf '%s\n' 'update' >> "${HOME}/.ash_history"
+fi
 
 EOF
 )"
@@ -97,14 +100,14 @@ EOF
 # Function: println
 # Description: Prints each argument on a new line, suppressing any error messages.
 println() {
-    command printf %s\\n "$*" 2>/dev/null
+    command printf "%s\n" "$*" 2>/dev/null
 }
 
 # Function: print_err
-# Description: : Prints each argument on a new line to the standard error stream (stderr),
+# Description: Prints each argument on a new line to the standard error stream (stderr),
 #                while suppressing any error messages from printf
 print_err() {
-    printf "%s\n" "$*" 2>/dev/null >&2
+    printf "%s\n" "$*" >&2
 }
 
 ##########################################################################################
@@ -113,26 +116,24 @@ print_err() {
 
 # Check if the script is running as root
 if [ "$(id -u)" -ne 0 ]; then
-    print_err "==> Script must be run as root. Use sudo, su, or add "USER root" to your Dockerfile before running this script."
+    print_err "==> Script must be run as root. Use sudo, su, or add \"USER root\" to your Dockerfile before running this script."
     exit 1
 fi
 
-# Ensure that login shells get the correct path if the user updated the PATH using ENV.
-# rm -f /etc/profile.d/00-restore-env.sh
-# echo "export PATH=${PATH//$(sh -lc "echo \$PATH")/\$PATH}" > /etc/profile.d/00-restore-env.sh
-# chmod +x /etc/profile.d/00-restore-env.sh
+# Ensure that login shells get the correct PATH if the user updates it using ENV
+# (no automatic restoration configured here).
 
 # Update rc-service
 if type rc-update >/dev/null 2>&1; then
-    rc-update add docker
+    rc-update add docker default
 else
     print_err "==> Error: Unsupported or unrecognized service."
 fi
 
 # Ensure at least the en_US.UTF-8 UTF-8 locale is available.
 if [ "${LOCALE_ALREADY_SET}" != "true" ]; then
-    println 'export LC_ALL=en_GB.UTF-8' >>/etc/profile.d/locale.sh
-    sed -i 's|LANG=C.UTF-8|LANG=en_GB.UTF-8|' /etc/profile.d/locale.sh
+    println 'export LC_ALL=en_US.UTF-8' >>/etc/profile.d/locale.sh
+    sed -i 's|LANG=C.UTF-8|LANG=en_US.UTF-8|' /etc/profile.d/locale.sh
     locale
     LOCALE_ALREADY_SET="true"
 fi
@@ -148,9 +149,18 @@ if id -u "${USERNAME}" >/dev/null 2>&1; then
 
     if [ -n "${USER_GID}" ] && [ "${USER_GID}" -ne "${current_gid}" ]; then
         group_name="$(id -gn "${USERNAME}")"
-        addgroup -g "${USER_GID}" "${group_name}" || exit 1
-        deluser "${USERNAME}" "${group_name}" || exit 1
-        adduser "${USERNAME}" "${group_name}" || exit 1
+        if command -v groupmod >/dev/null 2>&1; then
+            groupmod -g "${USER_GID}" "${group_name}" || exit 1
+        else
+            target_group="$(awk -F: -v gid="${USER_GID}" '$3 == gid {print $1; exit}' /etc/group)"
+            if [ -z "${target_group}" ]; then
+                target_group="${group_name}_gid${USER_GID}"
+                addgroup -g "${USER_GID}" "${target_group}" || exit 1
+            fi
+            deluser "${USERNAME}" "${group_name}" || exit 1
+            adduser "${USERNAME}" "${target_group}" || exit 1
+            group_name="${target_group}"
+        fi
     fi
 
     if [ -n "${USER_UID}" ] && [ "${USER_UID}" -ne "${current_uid}" ]; then
@@ -201,7 +211,6 @@ fi
 # Check if the user exists
 if id "${USERNAME}" >/dev/null 2>&1; then
     println "${rc_snippet}" >>"${user_rc_path}/.profile"
-    println 'export PROMPT_DIRTRIM=4' >>"${user_rc_path}/.profile"
     chown "${USERNAME}":"${group_name}" "${user_rc_path}/.profile"
 else
     println "${rc_snippet}" >>/etc/profile
