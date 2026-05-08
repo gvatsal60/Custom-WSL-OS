@@ -106,17 +106,25 @@ Welcome! This guide will walk you through the process of setting up Windows Subs
      wsl --update
      ```
 
-5. Build and Run with Docker Compose
+5. Build with Docker Compose
 
    Open a terminal (PowerShell or Command Prompt) and navigate to the directory containing docker-compose.yml.
 
-   Build and run the Docker containers:
+   Build the Docker containers:
 
    ```sh
    docker-compose build
    ```
 
-   This command will build the Docker image according to the Dockerfile as specified in docker-compose.yml.
+   This command builds the Docker image according to the Dockerfile specified in docker-compose.yml.
+
+6. Run with Docker Compose
+
+   Start the Docker containers:
+
+   ```sh
+   docker-compose up -d
+   ```
 
 ## Additional Resources
 

@@ -58,8 +58,10 @@ PS1="${COLOR_USR}\u@\h ${COLOR_DIR}\w ${COLOR_GIT}\$(parse_git_branch)${COLOR_DE
 # Personal Aliases
 alias sou='. ${HOME}/.bashrc'
 
-# Add 'update' as an alias in 'bash_history'
-echo -e 'update' >> ${HOME}/.bash_history
+# Add 'update' to bash history once
+if ! grep -qxF 'update' "${HOME}/.bash_history" 2>/dev/null; then
+    printf '%s\n' 'update' >> "${HOME}/.bash_history"
+fi
 
 EOF
 )"
