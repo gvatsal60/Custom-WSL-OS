@@ -143,7 +143,12 @@ fi
 
 # Update rc-service
 if type rc-update >/dev/null 2>&1; then
-    rc-update add docker default
+    if [ -f /etc/init.d/docker ]; then
+        rc-update add docker default
+    else
+        print_err "==> Error: docker OpenRC service definition not found."
+        exit 1
+    fi
 else
     print_err "==> Error: Unsupported or unrecognized service."
 fi
