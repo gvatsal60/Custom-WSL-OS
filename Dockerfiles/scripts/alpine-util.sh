@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/sh
 
 ##########################################################################################
 # File: alpine-util.sh
@@ -108,7 +108,7 @@ default = ${USERNAME}
 
 # Set a command to run when a new WSL instance launches.
 [boot]
-command = service docker start
+command = rc-service docker start
 
 EOF
 )"
@@ -188,9 +188,13 @@ if id -u "${USERNAME}" >/dev/null 2>&1; then
 
     if [ -n "${USER_UID}" ] && [ "${USER_UID}" -ne "${current_uid}" ]; then
         # Changing UID directly is not supported; we have to recreate the user
-        current_groups=$(id -Gn "${USERNAME}" | tr ' ' ',')
+        primary_group=$(id -gn "${USERNAME}")
+        supplementary_groups=$(id -Gn "${USERNAME}" | tr ' ' '\n' | grep -vx "${primary_group}" || true)
         deluser "${USERNAME}" || exit 1
-        adduser -u "${USER_UID}" -G "${current_groups}" -s /bin/sh -D "${USERNAME}" || exit 1
+        adduser -u "${USER_UID}" -G "${primary_group}" -s /bin/sh -D "${USERNAME}" || exit 1
+        for supplemental_group in ${supplementary_groups}; do
+            addgroup "${USERNAME}" "${supplemental_group}" || exit 1
+        done
     fi
 else
     # Create user
