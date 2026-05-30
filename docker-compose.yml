@@ -14,11 +14,11 @@
 # Services
 ##########################################################################################
 services:
-  # ubuntu-wsl:
-  #   build:
-  #     context: Dockerfiles
-  #     dockerfile: Dockerfile.ubuntu
-  #   image: ubuntu-wsl:latest
+  ubuntu-wsl:
+    build:
+      context: Dockerfiles
+      dockerfile: Dockerfile.ubuntu
+    image: ubuntu-wsl:latest
   alpine-wsl:
     build:
       context: Dockerfiles

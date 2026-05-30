@@ -17,6 +17,7 @@ jobs:
       matrix:
         dockerfile:
           - Dockerfile.ubuntu
+          - Dockerfile.alpine
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
