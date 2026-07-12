@@ -36,8 +36,8 @@ rc_snippet="$(
     cat <<'EOF'
 
 # Add bin path
-if [[ "${PATH}" != *"$HOME/.local/bin"* ]]; then
-    export PATH="${PATH}:$HOME/.local/bin";
+if [[ "${PATH}" != *"${HOME}/.local/bin"* ]]; then
+    export PATH="${PATH}:${HOME}/.local/bin";
 fi
 
 # Define colors
@@ -56,10 +56,12 @@ parse_git_branch() {
 PS1="${COLOR_USR}\u@\h ${COLOR_DIR}\w ${COLOR_GIT}\$(parse_git_branch)${COLOR_DEF}${NEWLINE}\$ "
 
 # Personal Aliases
-alias sou='source ~/.bashrc'
+alias sou='. ${HOME}/.bashrc'
 
-# Add 'update' as an alias in 'bash_history'
-echo -e 'update' >> ~/.bash_history
+# Add 'update' to bash history once
+if ! grep -qxF 'update' "${HOME}/.bash_history" 2>/dev/null; then
+    printf '%s\n' 'update' >> "${HOME}/.bash_history"
+fi
 
 EOF
 )"

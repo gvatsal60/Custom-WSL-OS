@@ -1,8 +1,10 @@
 # ##########################################################################
-# File: Dockerfile.ubuntu
+# File: Dockerfile.alpine
 # Author: Vatsal Gupta (gvatsal60)
-# Date: 14-Sep-2024
-# Description: Brief description of the Dockerfile purpose.
+# Date: 17-Sep-2024
+# Description: Dockerfile for building an Alpine Linux-based development
+# environment with common CLI tools, Docker support, and a configurable
+# non-root user via alpine-util.sh.
 # ##########################################################################
 
 # ##########################################################################
@@ -13,7 +15,7 @@
 # ##########################################################################
 # Base Image
 # ##########################################################################
-FROM ubuntu:noble AS base
+FROM alpine:3 AS base
 
 # ##########################################################################
 # Maintainer
@@ -25,56 +27,41 @@ LABEL maintainer="Vatsal Gupta (gvatsal60)"
 # ##########################################################################
 # Define the arguments
 ARG HELPER_SCRIPT_SRC="scripts"
-ARG HELPER_SCRIPT="debian-util.sh"
-ARG USERNAME="ubuntu"
+ARG HELPER_SCRIPT="alpine-util.sh"
+ARG USERNAME="alpine"
 ARG USER_UID=1000
 ARG USER_GID=${USER_UID}
 
-RUN apt-get update \
-  && apt-get -y install --no-install-recommends \
-  apt-transport-https \
-  apt-utils \
-  bash-completion \
-  build-essential \
+RUN apk update \
+  && apk add --no-cache \
+  bash \
   ca-certificates \
   curl \
-  dialog \
-  dirmngr \
+  docker \
   git \
-  gnupg2 \
   htop \
-  init-system-helpers \
   iproute2 \
   jq \
   less \
-  libc6 \
-  libgssapi-krb5-2 \
-  libicu[0-9][0-9] \
-  libkrb5-3 \
-  liblttng-ust[0-9] \
-  libstdc++6 \
-  locales \
-  lsb-release \
-  lsof \
-  man-db \
-  manpages \
-  manpages-dev \
+  libc6-compat \
+  libmagic \
+  musl \
+  musl-locales \
+  musl-utils \
   nano \
   ncdu \
-  net-tools \
+  openrc \
   openssh-client \
   procps \
-  psmisc \
   rsync \
   strace \
   sudo \
+  tzdata \
   unzip \
-  vim-tiny \
+  vim \
   wget \
   zip \
-  zlib1g \
-  && apt-get -y clean \
-  && rm -rf /var/lib/apt/lists/*
+  zlib
 
 # ##########################################################################
 # Copy Files
@@ -94,11 +81,9 @@ COPY "${HELPER_SCRIPT_SRC}/${HELPER_SCRIPT}" "/tmp/${HELPER_SCRIPT_SRC}/"
 # Command to Run
 # ##########################################################################
 # Run a series of commands:
-# 1. Execute the 'debian-util.sh' script with USERNAME as an argument
-# 2. Clean up APT caches to reduce image size
-# 3. Remove temporary files and directories
-RUN bash "/tmp/${HELPER_SCRIPT_SRC}/${HELPER_SCRIPT}" "${USERNAME}" "${USER_UID}" "${USER_GID}" \
-  && apt-get clean -y \
-  && rm -rf /var/lib/apt/lists/* "/tmp/${HELPER_SCRIPT_SRC}/"
+# 1. Execute the 'alpine-util.sh' script with USERNAME as an argument
+# 2. Remove temporary files and directories
+RUN ash "/tmp/${HELPER_SCRIPT_SRC}/${HELPER_SCRIPT}" "${USERNAME}" "${USER_UID}" "${USER_GID}" \
+  && rm -rf /var/cache/apk/* "/tmp/${HELPER_SCRIPT_SRC}/"
 
-CMD ["/bin/bash"]
+CMD ["/bin/ash"]
