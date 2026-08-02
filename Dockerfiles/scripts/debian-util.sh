@@ -3,7 +3,6 @@
 ##########################################################################################
 # File: debian-util.sh
 # Author: Vatsal Gupta (gvatsal60)
-# Date: 14-Sep-2024
 # Description:
 # This script contains utility functions and common operations for managing
 # a Debian-based system. It includes functions for system maintenance,
