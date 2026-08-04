@@ -38,6 +38,13 @@ readonly ALIAS_SOURCE_URL="https://raw.githubusercontent.com/gvatsal60/Linux-Ali
 ##########################################################################################
 # Functions
 ##########################################################################################
+curl_https() {
+    if ! command -v curl >/dev/null 2>&1; then
+        echo "Error: curl is not installed. Aborting." >&2
+        return 1
+    fi
+    curl -fsSL --proto '=https' "$@"
+}
 
 ##########################################################################################
 # Main Script
@@ -45,12 +52,7 @@ readonly ALIAS_SOURCE_URL="https://raw.githubusercontent.com/gvatsal60/Linux-Ali
 
 # Install Linux aliases from external script using curl and execute immediately
 # Note: Make sure to review scripts fetched from external sources for security reasons
-if command -v curl >/dev/null 2>&1; then
-    curl -fsSL "${ALIAS_SOURCE_URL}" | sh
-else
-    echo "Error: curl is not installed. Unable to use Linux aliases"
-    exit 1
-fi
+curl_https "${ALIAS_SOURCE_URL}" | sh
 
 # As bind mounts not supported in GitHub Codespaces
 if [ -n "${CODESPACE_NAME}" ]; then
