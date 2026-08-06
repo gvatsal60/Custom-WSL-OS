@@ -1,7 +1,6 @@
 ##########################################################################################
 # File: docker-compose.yml
 # Author: Vatsal Gupta (gvatsal60)
-# Date: 15-Sep-2024
 # Description: Defines services that builds a Docker image from a custom Dockerfile located
 #              in the 'Dockerfiles' directory.
 ##########################################################################################
