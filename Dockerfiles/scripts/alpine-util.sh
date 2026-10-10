@@ -1,0 +1,247 @@
+#!/bin/sh
+
+##########################################################################################
+# File: alpine-util.sh
+# Author: Vatsal Gupta (gvatsal60)
+# Date: 17-Sep-2024
+# Description:
+# This script contains utility functions and common operations for managing
+# an Alpine-based system. It includes functions for system maintenance,
+# package management, and configuration tasks. The script is designed to
+# simplify and automate common administrative tasks, ensuring a consistent
+# setup across multiple Alpine-based environments.
+##########################################################################################
+
+##########################################################################################
+# License
+##########################################################################################
+# This script is licensed under the Apache 2.0 License.
+
+##########################################################################################
+# Constants
+##########################################################################################
+# Exit the script immediately if any command fails
+set -e
+
+# Set non-interactive mode (not strictly necessary for apk, but included for completeness)
+export APK_INTERACTIVE="false"
+
+# Ensure the en_US.UTF-8 UTF-8 locale is available
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+# Set default username if not provided as an argument
+USERNAME=${1:-"root"}
+USER_UID=${2:-}
+USER_GID=${3:-}
+
+# Validate optional UID/GID inputs when provided
+case "${USER_UID}" in
+    "" | *[!0-9]*)
+        if [ -n "${USER_UID}" ]; then
+            printf "%s\n" "==> Error: USER_UID must be a numeric value." >&2
+            exit 1
+        fi
+        ;;
+esac
+
+case "${USER_GID}" in
+    "" | *[!0-9]*)
+        if [ -n "${USER_GID}" ]; then
+            printf "%s\n" "==> Error: USER_GID must be a numeric value." >&2
+            exit 1
+        fi
+        ;;
+esac
+
+# .bashrc snippet
+rc_snippet="$(
+    cat <<'EOF'
+
+# Add bin path
+case ":${PATH}:" in
+    *":${HOME}/.local/bin:"*) ;;
+    *) PATH="${PATH}:${HOME}/.local/bin"; export PATH ;;
+esac
+
+# Define colors
+COLOR_USR='\033[01;32m'  # User color
+COLOR_DIR='\033[01;34m'  # Directory color
+COLOR_GIT='\033[01;36m'  # Git branch color
+COLOR_DEF='\033[00m'     # Default color
+NEWLINE='\n'                 # Newline character
+
+# Function to parse git branch (if available)
+parse_git_branch() {
+    git branch 2>/dev/null | grep \* | awk '{print " (" $2 ") "}'
+}
+
+# Set the PS1 prompt
+PS1="${COLOR_USR}\u@\h ${COLOR_DIR}\w ${COLOR_GIT}\$(parse_git_branch)${COLOR_DEF}${NEWLINE}\$ "
+
+# Personal Aliases
+alias sou='. ${HOME}/.profile'
+
+# Add 'update' to ash history once
+if ! grep -qxF 'update' "${HOME}/.ash_history" 2>/dev/null; then
+    printf '%s\n' 'update' >> "${HOME}/.ash_history"
+fi
+
+EOF
+)"
+
+# WSL Configuration
+readonly WSL_CONF_PATH="/etc/wsl.conf"
+
+WSL_CONF="$(
+    cat <<EOF
+
+# Set whether WSL supports interop processes like launching Windows apps and adding path variables.
+# Setting these to false will block the launch of Windows processes and block adding 'PATH' environment variables.
+[interop]
+enabled = true
+appendWindowsPath = true
+
+# Set the user when launching a distribution with WSL.
+[user]
+default = ${USERNAME}
+
+# Set a command to run when a new WSL instance launches.
+[boot]
+command = rc-service docker start
+
+EOF
+)"
+
+##########################################################################################
+# Functions
+##########################################################################################
+# Function: println
+# Description: Prints each argument on a new line, suppressing any error messages.
+println() {
+    command printf "%s\n" "$*" 2>/dev/null
+}
+
+# Function: print_err
+# Description: Prints each argument on a new line to the standard error stream (stderr).
+print_err() {
+    printf "%s\n" "$*" >&2
+}
+
+##########################################################################################
+# Main Script
+##########################################################################################
+
+# Check if the script is running as root
+if [ "$(id -u)" -ne 0 ]; then
+    print_err "==> Script must be run as root. Use sudo, su, or add \"USER root\" to your Dockerfile before running this script."
+    exit 1
+fi
+
+# Ensure that login shells get the correct PATH if the user updates it using ENV
+# (no automatic restoration configured here).
+
+# Update rc-service
+if type rc-update >/dev/null 2>&1; then
+    if [ -f /etc/init.d/docker ]; then
+        rc-update add docker default
+    else
+        print_err "==> Error: docker OpenRC service definition not found."
+        exit 1
+    fi
+else
+    print_err "==> Error: Unsupported or unrecognized service."
+fi
+
+# Ensure at least the en_US.UTF-8 UTF-8 locale is available.
+if [ "${LOCALE_ALREADY_SET}" != "true" ]; then
+    println 'export LC_ALL=en_US.UTF-8' >>/etc/profile.d/locale.sh
+    sed -i 's|LANG=C.UTF-8|LANG=en_US.UTF-8|' /etc/profile.d/locale.sh
+    locale
+    LOCALE_ALREADY_SET="true"
+fi
+
+# Create or update a non-root user to match UID/GID.
+group_name="${USERNAME}"
+
+# Check if the user exists
+if id -u "${USERNAME}" >/dev/null 2>&1; then
+    # User exists, update if needed
+    current_gid=$(id -g "${USERNAME}")
+    current_uid=$(id -u "${USERNAME}")
+
+    if [ -n "${USER_GID}" ] && [ "${USER_GID}" -ne "${current_gid}" ]; then
+        group_name="$(id -gn "${USERNAME}")"
+        if command -v groupmod >/dev/null 2>&1; then
+            groupmod -g "${USER_GID}" "${group_name}" || exit 1
+        else
+            target_group="$(awk -F: -v gid="${USER_GID}" '$3 == gid {print $1; exit}' /etc/group)"
+            if [ -z "${target_group}" ]; then
+                target_group="${group_name}_gid${USER_GID}"
+                addgroup -g "${USER_GID}" "${target_group}" || exit 1
+            fi
+            deluser "${USERNAME}" "${group_name}" || exit 1
+            adduser "${USERNAME}" "${target_group}" || exit 1
+            group_name="${target_group}"
+        fi
+    fi
+
+    if [ -n "${USER_UID}" ] && [ "${USER_UID}" -ne "${current_uid}" ]; then
+        # Changing UID directly is not supported; we have to recreate the user
+        primary_group=$(id -gn "${USERNAME}")
+        supplementary_groups=$(id -Gn "${USERNAME}" | tr ' ' '\n' | grep -vx "${primary_group}" || true)
+        deluser "${USERNAME}" || exit 1
+        adduser -u "${USER_UID}" -G "${primary_group}" -s /bin/sh -D "${USERNAME}" || exit 1
+        for supplemental_group in ${supplementary_groups}; do
+            addgroup "${USERNAME}" "${supplemental_group}" || exit 1
+        done
+    fi
+else
+    # Create user
+    if [ -n "${USER_GID}" ]; then
+        addgroup -g "${USER_GID}" "${USERNAME}"
+    else
+        addgroup "${USERNAME}"
+    fi
+
+    if [ -n "${USER_UID}" ]; then
+        adduser -u "${USER_UID}" -G "${USERNAME}" -s /bin/sh -D "${USERNAME}"
+    else
+        adduser -G "${USERNAME}" -s /bin/sh -D "${USERNAME}"
+    fi
+fi
+
+# Add sudo support for non-root user
+if [ "${USERNAME}" != "root" ] && [ "${EXISTING_NON_ROOT_USER}" != "${USERNAME}" ]; then
+    # Create or update the sudoers file with the correct configuration
+    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${USERNAME}" >/dev/null
+    chmod 0440 "/etc/sudoers.d/${USERNAME}"
+    EXISTING_NON_ROOT_USER="${USERNAME}"
+fi
+
+# Add ${USER} to 'docker' group if the group exists
+if getent group docker >/dev/null; then
+    addgroup "${USERNAME}" docker || exit 1
+else
+    print_err "==> Error: 'docker' group does not exist."
+    exit 1
+fi
+
+# Shell customization section
+if [ "${USERNAME}" = "root" ]; then
+    user_rc_path="/root"
+else
+    user_rc_path="/home/${USERNAME}"
+fi
+
+# Add RC snippet and custom bash prompt
+# Check if the user exists
+if id "${USERNAME}" >/dev/null 2>&1; then
+    println "${rc_snippet}" >>"${user_rc_path}/.profile"
+    chown "${USERNAME}":"${group_name}" "${user_rc_path}/.profile"
+else
+    println "${rc_snippet}" >>/etc/profile
+fi
+
+# Configure WSL Startup Script
+println "${WSL_CONF}" >"${WSL_CONF_PATH}"
