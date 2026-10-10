@@ -78,7 +78,7 @@ repos:
       - id: flake8
   # Clang-format for formatting C, C++, and JavaScript files
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: "v23.1.1"
+    rev: "v23.1.2"
     hooks:
       - id: clang-format
   # ESLint for linting JavaScript and TypeScript files
