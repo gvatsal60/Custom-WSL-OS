@@ -93,10 +93,9 @@ COPY "${HELPER_SCRIPT_SRC}/${HELPER_SCRIPT}" "/tmp/${HELPER_SCRIPT_SRC}/"
 # Command to Run
 # ##########################################################################
 # Run a series of commands:
-# 1. Use 'yes' to automatically respond with 'y' to any prompts from 'unminimize'
-# 2. Execute the 'debian-util.sh' script with USERNAME as an argument
-# 3. Clean up APT caches to reduce image size
-# 4. Remove temporary files and directories
+# 1. Execute the 'debian-util.sh' script with USERNAME as an argument
+# 2. Clean up APT caches to reduce image size
+# 3. Remove temporary files and directories
 RUN bash "/tmp/${HELPER_SCRIPT_SRC}/${HELPER_SCRIPT}" "${USERNAME}" "${USER_UID}" "${USER_GID}" \
   && apt-get clean -y \
   && rm -rf /var/lib/apt/lists/* "/tmp/${HELPER_SCRIPT_SRC}/"
