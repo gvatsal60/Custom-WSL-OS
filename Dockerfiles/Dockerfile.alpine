@@ -1,0 +1,89 @@
+# ##########################################################################
+# File: Dockerfile.alpine
+# Author: Vatsal Gupta (gvatsal60)
+# Date: 17-Sep-2024
+# Description: Dockerfile for building an Alpine Linux-based development
+# environment with common CLI tools, Docker support, and a configurable
+# non-root user via alpine-util.sh.
+# ##########################################################################
+
+# ##########################################################################
+# License
+# ##########################################################################
+# This Dockerfile is licensed under the Apache 2.0 License.
+
+# ##########################################################################
+# Base Image
+# ##########################################################################
+FROM alpine:3 AS base
+
+# ##########################################################################
+# Maintainer
+# ##########################################################################
+LABEL maintainer="Vatsal Gupta (gvatsal60)"
+
+# ##########################################################################
+# Install Dependencies
+# ##########################################################################
+# Define the arguments
+ARG HELPER_SCRIPT_SRC="scripts"
+ARG HELPER_SCRIPT="alpine-util.sh"
+ARG USERNAME="alpine"
+ARG USER_UID=1000
+ARG USER_GID=${USER_UID}
+
+RUN apk update \
+  && apk add --no-cache \
+  bash \
+  ca-certificates \
+  curl \
+  docker \
+  git \
+  htop \
+  iproute2 \
+  jq \
+  less \
+  libc6-compat \
+  libmagic \
+  musl \
+  musl-locales \
+  musl-utils \
+  nano \
+  ncdu \
+  openrc \
+  openssh-client \
+  procps \
+  rsync \
+  strace \
+  sudo \
+  tzdata \
+  unzip \
+  vim \
+  wget \
+  zip \
+  zlib
+
+# ##########################################################################
+# Copy Files
+# ##########################################################################
+# Copy the helper script from the 'scripts' directory into the /tmp/scripts directory
+COPY "${HELPER_SCRIPT_SRC}/${HELPER_SCRIPT}" "/tmp/${HELPER_SCRIPT_SRC}/"
+
+# ##########################################################################
+# Set Working Directory
+# ##########################################################################
+
+# ##########################################################################
+# Expose Port
+# ##########################################################################
+
+# ##########################################################################
+# Command to Run
+# ##########################################################################
+# Run a series of commands:
+# 1. Execute the 'alpine-util.sh' script with USERNAME as an argument
+# 2. Remove temporary files and directories
+RUN ash "/tmp/${HELPER_SCRIPT_SRC}/${HELPER_SCRIPT}" "${USERNAME}" "${USER_UID}" "${USER_GID}" \
+  && rm -rf /var/cache/apk/* "/tmp/${HELPER_SCRIPT_SRC}/"
+
+CMD ["/bin/ash"]
