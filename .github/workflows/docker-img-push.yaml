@@ -18,12 +18,17 @@ jobs:
         dockerfile:
           - Dockerfile.ubuntu
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        with:
+          egress-policy: audit
+
       - name: Checkout Code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
+        uses: step-security/setup-buildx-action@e50058a0fcd8d1a7d626c905502d010a468bf238 # v4.4.1
       - name: Log in to GitHub Docker registry
-        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550
+        uses: step-security/docker-login-action@8c7b695d8738c5699a679ff5254baf0f19f20a94 # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -57,7 +62,7 @@ jobs:
           fi
       - name: Build Docker image only
         if: github.event_name == 'pull_request'
-        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+        uses: step-security/docker-build-push-action@b736dc8a921e02a288f956d3dd9111e276a4cfec # v7.4.0
         with:
           context: Dockerfiles
           file: Dockerfiles/${{ matrix.dockerfile }}
@@ -66,7 +71,7 @@ jobs:
           tags: ghcr.io/${{ env.GITHUB_ACTOR }}/${{ env.IMG_REPO_NAME }}:${{ env.TAG_NAME }}
       - name: Build and push Docker image
         if: github.event_name == 'push'
-        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
+        uses: step-security/docker-build-push-action@b736dc8a921e02a288f956d3dd9111e276a4cfec # v7.4.0
         with:
           context: Dockerfiles
           file: Dockerfiles/${{ matrix.dockerfile }}
@@ -105,7 +110,7 @@ jobs:
             "https://api.github.com/repos/$REPO/releases/$RELEASE_ID"
       - name: Create GitHub release
         if: github.event_name == 'push'
-        uses: actions/create-release@v1
+        uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e # v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -116,7 +121,7 @@ jobs:
         id: create_release
       - name: Upload tar as release asset
         if: github.event_name == 'push'
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5 # v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
