@@ -17,6 +17,7 @@ jobs:
       matrix:
         dockerfile:
           - Dockerfile.ubuntu
+          - Dockerfile.alpine
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
