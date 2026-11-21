@@ -169,7 +169,7 @@ repos:
       - id: rubocop
   # Terraform-py for formatting and validating Terraform files
   - repo: https://github.com/AleksaC/terraform-py
-    rev: "v1.17.1"
+    rev: "v1.17.2"
     hooks:
       - id: tf-fmt
       - id: tf-validate
