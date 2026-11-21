@@ -68,7 +68,7 @@ repos:
       - id: autopep8
   # Isort for sorting Python imports
   - repo: https://github.com/pycqa/isort
-    rev: "10.0.0b2"
+    rev: "10.0.0b3"
     hooks:
       - id: isort
   # Flake8 for linting Python files
